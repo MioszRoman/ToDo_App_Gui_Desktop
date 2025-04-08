@@ -1,6 +1,7 @@
 import FreeSimpleGUI as Sg
 from functions import get_todos, write_todos
 import os
+import time
 
 
 if not os.path.exists('todos.txt'):
@@ -9,6 +10,7 @@ if not os.path.exists('todos.txt'):
 
 Sg.theme("Black")
 label = Sg.Text("Type in a To-Do: ")
+clock = Sg.Text("", key="clock")
 input_box = Sg.InputText(tooltip="Enter a to-do", key="todo")
 add_button = Sg.Button("Add")
 edit_button = Sg.Button("Edit")
@@ -16,12 +18,13 @@ close_button = Sg.Button("Close")
 complete_button = Sg.Button("Complete")
 list_box = Sg.Listbox(values=get_todos(), key='todos', size=(45, 10))
 
-layout = [[label], [[[input_box, add_button], [list_box, edit_button, complete_button]] , [close_button]]]
+layout = [[label, clock], [[[input_box, add_button], [list_box, edit_button, complete_button]] , [close_button]]]
 
 window = Sg.Window('My To-Do App', layout=layout)
 
 while True:
-    event, value = window.read()
+    event, value = window.read(timeout=200)
+    window['clock'].update(value=time.strftime("%B %d, %Y  %H:%M:%S"))
     match event:
         case 'Add':
             todos = get_todos()
@@ -44,8 +47,11 @@ while True:
             write_todos(todos)
             window['todos'].update(todos)
             window['todo'].update("")
+        case 'todos':
+            window['todo'].update(value=value['todos'][0])
         case "Close":
             break
         case Sg.WIN_CLOSED:
             break
 
+window.close()
