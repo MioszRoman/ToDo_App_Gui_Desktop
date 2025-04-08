@@ -44,6 +44,13 @@ while True:
             todos[index] = new_todo
             write_todos(todos)
             window['todos'].update(todos)
+        case 'Complete':
+            todos = get_todos()
+            todo_to_complete = value['todos'][0]
+            todos.remove(todo_to_complete)
+            write_todos(todos)
+            window['todos'].update(todos)
+            window['todo'].update("")
         case "Close":
             break
         case Sg.WIN_CLOSED:
